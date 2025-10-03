@@ -29,7 +29,7 @@ def get_llm():
     return ChatOpenAI(
         model=model_name,
         temperature=temperature,
-        openai_api_key=api_key
+        api_key=api_key
     )
 
 
@@ -200,6 +200,9 @@ def process_single_feedback(feedback_id: int, text: str) -> Dict[str, Any]:
     logger.info(f"Processing feedback {feedback_id}")
     
     llm = get_llm()
+    
+    classified = None
+    score = None
     
     if llm is None or MOCK_MODE:
         logger.info("Running in mock mode")
