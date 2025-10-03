@@ -1,0 +1,124 @@
+You are an expert AI engineer and full-stack builder. Take the following MVP code (CrewAI + Pydantic + multi-agent pipeline for customer feedback prioritization) and **extend it into a hackathon-winning, production-quality project**.
+
+## 🔥 Requirements
+
+### 1. Core AI Pipeline
+
+* Keep the **three-agent CrewAI pipeline**:
+
+  1. **Classifier Agent** → classifies raw feedback into sentiment + theme (`ClassifiedFeedback`).
+  2. **Evaluator Agent** → assigns urgency, impact, and justification (`PrioritizationScore`).
+  3. **Prioritizer Agent** → generates a Markdown top-5 action list for product teams.
+* Ensure **strict schema adherence** with `pydantic`.
+* Implement **robust error handling** (invalid JSON retries, graceful degradation if LLM fails).
+* Add **logging with timestamps** for debugging.
+* Add **configurable LLM model + parameters** via `.env` file.
+
+### 2. Data Handling
+
+* Store **raw, classified, and scored feedback** in a **SQLite database** with proper schema:
+
+  * `feedback (id, text, sentiment, theme, summary)`
+  * `scores (feedback_id, urgency, impact, justification, priority_score)`
+  * `reports (id, generated_at, markdown_report)`
+* On each run:
+
+  * Insert new classified + scored feedback into DB.
+  * Save final Markdown report into DB + `/reports/YYYY-MM-DD.md`.
+
+### 3. API Layer (FastAPI)
+
+Implement a **REST API** with endpoints:
+
+* `POST /feedback` → submit new feedback (JSON).
+* `GET /feedback` → list all feedback + scores.
+* `GET /report/latest` → fetch the latest Markdown report.
+* `GET /health` → simple health check.
+
+### 4. Frontend Dashboard (Next.js + TailwindCSS)
+
+* A **dashboard** with:
+
+  * Table view of all feedback (sortable by urgency, impact, priority).
+  * Chart (urgency vs impact heatmap, priority distribution).
+  * Upload form (CSV input).
+  * Weekly report preview (Markdown rendered).
+* Fetches data via FastAPI backend.
+
+### 5. Notifications & Exports
+
+* **Slack Integration** → post weekly top-5 report to a chosen channel.
+* **Email Integration** → send the report as plain text + Markdown attachment.
+* **Notion Integration** → push the report into a Notion database/page.
+
+### 6. Developer Experience
+
+* Write **README.md** with:
+
+  * Setup instructions (`pip install`, `.env` configuration).
+  * Running backend + frontend.
+  * Example usage with sample data.
+* Include **tests** (pytest) for:
+
+  * Schema validation.
+  * DB operations.
+  * API endpoints.
+* Provide **example CSV** with feedback entries.
+* Provide **docker-compose.yml** for easy spin-up (backend, db, frontend).
+* Include **Makefile** with shortcuts: `make run`, `make test`, `make report`.
+
+### 7. Extra Quality Additions
+
+* Add **cron-like scheduler** (e.g., `APScheduler`) to auto-generate reports every week.
+* Add **caching layer** (simple in-memory with `functools.lru_cache`).
+* Add **configurable logging levels** (info/debug/error).
+* Add **retry mechanism** for LLM calls (handle OutputParserException, timeouts).
+* Make sure the **entire pipeline can be run offline in “mock mode”** (bypass LLM, return deterministic results for demo).
+
+## 📑 Deliverables
+
+When you generate the project, provide:
+
+* **Backend files** (FastAPI app, models, DB schema, CrewAI pipeline).
+* **Frontend files** (Next.js + Tailwind dashboard).
+* **Integration scripts** (Slack, Email, Notion).
+* **Test files** (pytest).
+* **Example data**.
+* **README.md** with all instructions.
+
+## ⚡ Key Instructions
+
+* Generate **modular, production-quality code** with comments.
+* Provide a **clear repo structure** like:
+
+```
+customer-feedback-prioritizer/
+├── backend/
+│   ├── app.py
+│   ├── models.py
+│   ├── db.py
+│   ├── crew_pipeline.py
+│   ├── routes/
+│   │   ├── feedback.py
+│   │   └── reports.py
+├── frontend/
+│   ├── pages/
+│   ├── components/
+│   ├── styles/
+├── integrations/
+│   ├── slack.py
+│   ├── email.py
+│   ├── notion.py
+├── reports/
+│   └── sample_report.md
+├── tests/
+│   ├── test_models.py
+│   ├── test_api.py
+├── .env.example
+├── requirements.txt
+├── docker-compose.yml
+├── Makefile
+├── README.md
+```
+
+Now, extend the MVP into this **full-fledged hackathon project**. Generate the repo files step by step.
