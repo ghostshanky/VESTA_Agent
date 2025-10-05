@@ -58,7 +58,7 @@ export default function FeedbackForm({ onSuccess }: { onSuccess: () => void }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Submit Single Feedback</h2>
+        <h2 className="text-xl font-semibold mb-4">Submit New Feedback</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -70,7 +70,7 @@ export default function FeedbackForm({ onSuccess }: { onSuccess: () => void }) {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={6}
               required
-              placeholder="Enter customer feedback..."
+              placeholder="Enter your feedback here..."
             />
           </div>
 
@@ -102,13 +102,14 @@ export default function FeedbackForm({ onSuccess }: { onSuccess: () => void }) {
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Upload CSV</h2>
+        <h2 className="text-xl font-semibold mb-4">Upload Feedback CSV</h2>
         <form onSubmit={handleFileUpload} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="csvFile" className="block text-sm font-medium text-gray-700 mb-2">
               CSV File
             </label>
             <input
+              id="csvFile"
               type="file"
               accept=".csv"
               onChange={(e) => setFile(e.target.files?.[0] || null)}
@@ -117,11 +118,11 @@ export default function FeedbackForm({ onSuccess }: { onSuccess: () => void }) {
           </div>
 
           <div className="bg-gray-50 p-4 rounded-md">
-            <p className="text-sm text-gray-600 mb-2">CSV Format:</p>
+            <p className="text-sm text-gray-600 mb-2">CSV format: text (required), source (optional, e.g., web, email, survey, support)</p>
             <code className="text-xs bg-white p-2 block rounded">
               text,source<br />
-              &quot;Great product!&quot;,email<br />
-              &quot;Bug in checkout&quot;,support
+              "Great product!",email<br />
+              "Bug in checkout",support
             </code>
           </div>
 
@@ -130,7 +131,7 @@ export default function FeedbackForm({ onSuccess }: { onSuccess: () => void }) {
             disabled={loading || !file}
             className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
           >
-            {loading ? 'Uploading...' : 'Upload CSV'}
+            {loading ? 'Uploading...' : 'Submit'}
           </button>
         </form>
       </div>

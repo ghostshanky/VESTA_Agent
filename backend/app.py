@@ -7,6 +7,9 @@ from datetime import datetime
 from backend.db import init_db
 from backend.routes import feedback, reports
 from backend.models.schemas import HealthResponse
+from dotenv import load_dotenv
+
+load_dotenv()  # Load environment variables from .env file
 
 logging.basicConfig(
     level=os.getenv("LOG_LEVEL", "INFO"),
@@ -28,7 +31,7 @@ app = FastAPI(
     title="Customer Feedback Prioritization API",
     description="AI-powered customer feedback analysis and prioritization system",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -53,15 +56,15 @@ async def health_check():
     except Exception as e:
         logger.error(f"Database health check failed: {e}")
         db_status = "unhealthy"
-    
+
     openai_key = os.getenv("OPENAI_API_KEY")
     llm_configured = bool(openai_key and openai_key.strip())
-    
+
     return HealthResponse(
         status="healthy",
         timestamp=datetime.now(),
         database=db_status,
-        llm_configured=llm_configured
+        llm_configured=llm_configured,
     )
 
 
@@ -70,5 +73,5 @@ async def root():
     return {
         "message": "Customer Feedback Prioritization API",
         "version": "1.0.0",
-        "docs": "/docs"
+        "docs": "/docs",
     }

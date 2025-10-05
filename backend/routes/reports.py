@@ -6,6 +6,7 @@ import os
 from backend.models.schemas import ReportResponse
 from backend.db import get_all_feedback, insert_report, get_latest_report, get_all_reports
 from backend.crew_pipeline import generate_priority_report
+from integrations.email_integration import EmailIntegration
 
 router = APIRouter(prefix="/report", tags=["reports"])
 logger = logging.getLogger(__name__)
@@ -15,21 +16,31 @@ logger = logging.getLogger(__name__)
 async def generate_report():
     try:
         feedback_list = get_all_feedback()
-        
+
         markdown_report = generate_priority_report(feedback_list)
-        
-        report_id = insert_report(markdown_report)
-        
+
+        insert_report(markdown_report)
+
         os.makedirs("reports", exist_ok=True)
         filename = f"reports/{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.md"
         with open(filename, 'w') as f:
             f.write(markdown_report)
         logger.info(f"Report saved to {filename}")
-        
+
+        # Send email with report
+        email_integration = EmailIntegration()
+        subject = f"Feedback Priority Report - {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        body = markdown_report + "\n\nAccess the Admin Panel here: http://localhost:5000"
+        success = email_integration.send_report_email(subject, body)
+        if success:
+            logger.info("Report email sent successfully")
+        else:
+            logger.warning("Failed to send report email")
+
         report = get_latest_report()
         if not report:
             raise HTTPException(status_code=500, detail="Failed to retrieve generated report")
-        
+
         return ReportResponse(**report)
     except Exception as e:
         logger.error(f"Error generating report: {e}")

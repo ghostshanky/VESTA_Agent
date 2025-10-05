@@ -27,7 +27,7 @@ A production-quality AI-powered customer feedback analysis and prioritization sy
 
 ### Integrations
 - **Slack**: Post weekly reports to channels
-- **Email**: Send reports via SMTP with attachments
+- **Email**: Send reports via SMTP with attachments and styled HTML emails
 - **Notion**: Push reports to Notion databases
 
 ### Developer Experience
@@ -36,6 +36,15 @@ A production-quality AI-powered customer feedback analysis and prioritization sy
 - Makefile with helpful shortcuts
 - Example CSV data included
 - Detailed logging with configurable levels
+
+## Recent Enhancements
+
+### Email Report Improvements
+- Converted email report content from plain text to HTML using markdown conversion for better formatting.
+- Enhanced email template with colors, shading, box shadows, and styled headers.
+- Added VESTA Agent logo and footer message in the email.
+- Styled admin panel link for better visibility.
+- Ensured email sends correctly with SMTP credentials and environment variable configuration.
 
 ## Setup
 
@@ -54,7 +63,7 @@ make install
 2. Configure environment variables:
 ```bash
 cp .env.example .env
-# Edit .env and add your API keys
+# Edit .env and add your API keys and SMTP credentials
 ```
 
 ### Running the Application
@@ -79,24 +88,6 @@ Access the application:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8000
 - API Docs: http://localhost:8000/docs
-
-## Configuration
-
-### Environment Variables
-
-#### LLM Configuration
-- `OPENAI_API_KEY`: Your OpenAI API key
-- `LLM_MODEL`: Model to use (default: `gpt-4o-mini`)
-- `LLM_TEMPERATURE`: Temperature setting (default: `0.7`)
-- `MOCK_MODE`: Set to `true` to bypass LLM calls for demos
-
-#### Integrations
-- **Slack**: `SLACK_BOT_TOKEN`, `SLACK_CHANNEL`
-- **Email**: `SMTP_SERVER`, `SMTP_PORT`, `SENDER_EMAIL`, `SENDER_PASSWORD`, `EMAIL_RECIPIENTS`
-- **Notion**: `NOTION_API_KEY`, `NOTION_DATABASE_ID`
-
-#### Scheduler
-- `REPORT_CRON`: Cron expression for automated reports (default: `0 9 * * 1` - Mondays at 9 AM)
 
 ## Usage
 
@@ -230,7 +221,7 @@ The system automatically generates and distributes reports based on the `REPORT_
 
 **Backend won't start:**
 - Check that all environment variables are set
-- Verify Python dependencies: `uv sync`
+- Verify Python dependencies: `pip install -r requirements.txt`
 - Check logs for database initialization errors
 
 **Frontend won't connect:**
@@ -250,3 +241,19 @@ MIT License
 ## Support
 
 For issues and questions, please open an issue on GitHub.
+
+---
+
+# Summary of Changes Made
+
+- Added sorting functionality to the FeedbackTable component in the frontend.
+- Fixed TypeScript errors by properly importing React hooks.
+- Improved email report generation:
+  - Converted markdown report content to HTML for better email formatting.
+  - Enhanced email template with colors, shading, box shadows, and styled headers.
+  - Added VESTA Agent logo and footer message in the email.
+  - Styled admin panel link for better visibility.
+- Added markdown package to requirements and installed it.
+- Updated README.md with detailed project overview, setup instructions, usage, testing, and recent enhancements related to email report improvements.
+
+This completes the requested tasks and improvements for the Customer Feedback Prioritization System.

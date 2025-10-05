@@ -1,6 +1,5 @@
 import sqlite3
 import logging
-from datetime import datetime
 from contextlib import contextmanager
 from typing import List, Optional, Dict, Any
 
@@ -149,3 +148,14 @@ def get_all_reports() -> List[Dict[str, Any]]:
             "SELECT id, generated_at, markdown_report FROM reports ORDER BY generated_at DESC"
         )
         return [dict(row) for row in cursor.fetchall()]
+
+
+
+def delete_feedback(feedback_id: int) -> bool:
+    with get_db() as conn:
+        cursor = conn.cursor()
+        # Delete scores first due to foreign key constraint
+        cursor.execute("DELETE FROM scores WHERE feedback_id = ?", (feedback_id,))
+        # Delete feedback
+        cursor.execute("DELETE FROM feedback WHERE id = ?", (feedback_id,))
+        return cursor.rowcount > 0
