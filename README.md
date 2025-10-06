@@ -57,7 +57,7 @@ A production-quality AI-powered customer feedback analysis and prioritization sy
 
 1. Clone the repository and install dependencies:
 ```bash
-make install
+git clone https://github.com/ghostshanky/VESTA_Agent.git
 ```
 
 2. Configure environment variables:
