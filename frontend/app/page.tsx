@@ -37,6 +37,9 @@ function DashboardContent() {
   const [csvFile, setCsvFile] = useState<File | null>(null);
   // NEW STATE: To track the CSV upload process
   const [csvUploading, setCsvUploading] = useState(false);
+  // NEW STATE: For email sending
+  const [email, setEmail] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
 
   const fetchFeedback = async () => {
     try {
@@ -141,6 +144,20 @@ function DashboardContent() {
     }
   };
 
+  // NEW FUNCTION: Handle sending email
+  const handleSendEmail = async () => {
+    if (!email) {
+      setEmailMessage('Please enter a valid email address.');
+      return;
+    }
+    try {
+      const response = await axios.post(`${API_URL}/feedback/send-email`, { email });
+      setEmailMessage('Email sent successfully');
+    } catch (error) {
+      setEmailMessage('Failed to send email');
+    }
+  };
+
 
   useEffect(() => {
     fetchFeedback();
@@ -176,7 +193,7 @@ function DashboardContent() {
                     transition={{ delay: 0.2, duration: 0.6 }}
                     className="flex items-center gap-4"
                   >
-                    
+                    <img src="/VESTAicon.svg" alt="VESTA Logo" className="h-8 w-8" />
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-cyan-400 dark:to-purple-400 bg-clip-text text-transparent">
                       VESTA - an AI Feedback Prioritizer
                     </h1>
@@ -292,6 +309,35 @@ function DashboardContent() {
                       {submitting ? "Submitting..." : "Submit Feedback"}
                     </motion.button>
                   </form>
+                </div>
+
+                {/* Email Sending Section */}
+                <div className="bg-white/10 dark:bg-black/20 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/20 dark:border-white/10">
+                  <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Send Confirmation Email</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Gmail Address
+                      </label>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full px-4 py-3 bg-white/50 dark:bg-black/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                        placeholder="example@gmail.com"
+                        required
+                      />
+                    </div>
+                    <motion.button
+                      onClick={handleSendEmail}
+                      className="w-full bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      Generate Email
+                    </motion.button>
+                    {emailMessage && <p className="text-center text-sm text-gray-600 dark:text-gray-400">{emailMessage}</p>}
+                  </div>
                 </div>
               </motion.div>
             );
