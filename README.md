@@ -1,4 +1,4 @@
-# VESTA - an AI Feedback Prioritizer
+# <img src="https://github.com/ghostshanky/VESTA_Agent/blob/main/VESTAicon.png?raw=true" alt="Alt Text" width="35" height="35"> VESTA - an AI Feedback Prioritizer
 
 A production-quality AI-powered customer feedback analysis and prioritization system built with CrewAI, FastAPI, and Next.js.
 
