@@ -3,12 +3,18 @@ from typing import List
 import csv
 import io
 import logging
+from pydantic import BaseModel
 from backend.models.schemas import FeedbackInput, FeedbackResponse
 from backend.db import insert_feedback, get_all_feedback, get_feedback_by_id, delete_feedback
 from backend.crew_pipeline import process_single_feedback
+from integrations.email_integration import EmailIntegration
+
+class EmailRequest(BaseModel):
+    email: str
 
 router = APIRouter(prefix="/feedback", tags=["feedback"])
 logger = logging.getLogger(__name__)
+email_integration = EmailIntegration()
 
 
 @router.post("/", response_model=FeedbackResponse)
@@ -95,4 +101,21 @@ async def upload_csv(file: UploadFile = File(...)):
         }
     except Exception as e:
         logger.error(f"Error uploading CSV: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/send-email")
+async def send_email(request: EmailRequest):
+    try:
+        success = email_integration.send_custom_email(
+            request.email,
+            "Email Sent Successfully",
+            "Your email has been sent successfully from VESTA Agent."
+        )
+        if success:
+            return {"message": "Email sent successfully"}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to send email")
+    except Exception as e:
+        logger.error(f"Error sending email: {e}")
         raise HTTPException(status_code=500, detail=str(e))

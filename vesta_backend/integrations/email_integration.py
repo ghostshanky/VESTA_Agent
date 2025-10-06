@@ -70,3 +70,43 @@ class EmailIntegration:
         except Exception as e:
             logger.error(f"Failed to send report email: {e}")
             return False
+
+    def send_custom_email(self, to_email: str, subject: str, body: str) -> bool:
+        if not (self.smtp_user and self.smtp_password):
+            logger.error("SMTP credentials missing. Cannot send email.")
+            return False
+
+        msg = EmailMessage()
+        msg["Subject"] = subject
+        msg["From"] = self.smtp_user
+        msg["To"] = to_email
+        msg.set_content(body)
+
+        # Simple HTML body for custom email
+        html_content = f"""
+        <html>
+            <body style="font-family: Arial, sans-serif; color: #333; background-color: #f4f6f8; padding: 20px;">
+                <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <div style="margin-top: 20px; line-height: 1.6; color: #34495e;">
+                        {body}
+                    </div>
+                    <hr style="margin: 30px 0; border: none; border-top: 1px solid #ecf0f1;" />
+                    <div style="text-align: center; color: #95a5a6; font-size: 12px;">
+                        <p>This message is delivered by <strong>VESTA Agent</strong>.</p>
+                    </div>
+                </div>
+            </body>
+        </html>
+        """
+        msg.add_alternative(html_content, subtype='html')
+
+        try:
+            with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
+                server.starttls()
+                server.login(self.smtp_user, self.smtp_password)
+                server.send_message(msg)
+            logger.info(f"Custom email sent to {to_email}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to send custom email: {e}")
+            return False
