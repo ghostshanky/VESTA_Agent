@@ -21,7 +21,7 @@ class EmailIntegration:
         else:
             logger.warning("SMTP credentials not set. Email integration disabled.")
 
-    def send_report_email(self, subject: str, body: str) -> bool:
+    def send_report_email(self, subject: str, body: str, recipient: str | None = None) -> bool:
         if not (self.smtp_user and self.smtp_password):
             logger.error("SMTP credentials missing. Cannot send email.")
             return False
@@ -29,7 +29,8 @@ class EmailIntegration:
         msg = EmailMessage()
         msg["Subject"] = subject
         msg["From"] = self.smtp_user
-        msg["To"] = self.admin_email
+        # Use the provided recipient or fallback to admin_email
+        msg["To"] = recipient if recipient else self.admin_email
         msg.set_content(body)
 
         # Convert markdown report to HTML
@@ -65,7 +66,7 @@ class EmailIntegration:
                 server.starttls()
                 server.login(self.smtp_user, self.smtp_password)
                 server.send_message(msg)
-            logger.info(f"Report email sent to {self.admin_email}")
+            logger.info(f"Report email sent to {recipient if recipient else self.admin_email}")
             return True
         except Exception as e:
             logger.error(f"Failed to send report email: {e}")

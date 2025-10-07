@@ -3,6 +3,7 @@ from typing import List
 import logging
 from datetime import datetime
 import os
+from pydantic import BaseModel
 from backend.models.schemas import ReportResponse
 from backend.db import get_all_feedback, insert_report, get_latest_report, get_all_reports
 from backend.crew_pipeline import generate_priority_report
@@ -10,6 +11,9 @@ from integrations.email_integration import EmailIntegration
 
 router = APIRouter(prefix="/report", tags=["reports"])
 logger = logging.getLogger(__name__)
+
+class EmailRequest(BaseModel):
+    email: str
 
 
 @router.post("/generate", response_model=ReportResponse)
@@ -68,4 +72,28 @@ async def get_all():
         return [ReportResponse(**report) for report in reports]
     except Exception as e:
         logger.error(f"Error getting all reports: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/send-to-email")
+async def send_report_to_email(request: EmailRequest):
+    try:
+        # Get the latest report
+        report = get_latest_report()
+        if not report:
+            raise HTTPException(status_code=404, detail="No reports found")
+        
+        # Send email with report
+        email_integration = EmailIntegration()
+        subject = f"Feedback Priority Report - {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+        body = report['markdown_report'] + "\n\nAccess the Admin Panel here: http://localhost:5000"
+        success = email_integration.send_report_email(subject, body, request.email)
+        if success:
+            return {"message": "Report sent successfully"}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to send report email")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error sending report to email: {e}")
         raise HTTPException(status_code=500, detail=str(e))
