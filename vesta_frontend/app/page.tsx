@@ -35,6 +35,8 @@ function DashboardContent() {
   const [newFeedback, setNewFeedback] = useState({ text: "", source: "web" });
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [csvUploading, setCsvUploading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
 
   const fetchFeedback = async () => {
     try {
@@ -133,6 +135,19 @@ function DashboardContent() {
       setCsvFile(e.target.files[0]);
     } else {
       setCsvFile(null);
+    }
+  };
+
+  const handleSendEmail = async () => {
+    if (!email) {
+      setEmailMessage('Please enter a valid email address.');
+      return;
+    }
+    try {
+      const response = await axios.post(`${API_URL}/report/send-to-email`, { email });
+      setEmailMessage('Email sent successfully');
+    } catch (error) {
+      setEmailMessage('Failed to send email');
     }
   };
 
@@ -447,7 +462,34 @@ function DashboardContent() {
                   </div>
 
                   {report ? (
-                    <ReportPreview report={report} />
+                    <>
+                      <ReportPreview report={report} />
+                      <div className="bg-white/10 dark:bg-black/20 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-white/20 dark:border-white/10">
+                        <h3 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Send Report via Email</h3>
+                        <div className="space-y-4">
+                          <input
+                            type="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Enter email address"
+                            className="w-full px-4 py-3 bg-white/50 dark:bg-black/50 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                          />
+                          <motion.button
+                            onClick={handleSendEmail}
+                            className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                          >
+                            Send Email
+                          </motion.button>
+                          {emailMessage && (
+                            <p className={`text-sm ${emailMessage.includes('successfully') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                              {emailMessage}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </>
                   ) : (
                     <div className="bg-white/10 dark:bg-black/20 backdrop-blur-lg rounded-2xl p-12 shadow-xl border border-white/20 dark:border-white/10 text-center">
                       <FileText className="w-16 h-16 text-gray-400 mx-auto mb-4" />
