@@ -1,4 +1,4 @@
-# Customer Feedback Prioritization System
+# <img src="https://github.com/ghostshanky/VESTA_Agent/blob/main/VESTAicon.png?raw=true" alt="Alt Text" width="35" height="35"> VESTA - an AI Feedback Prioritizer
 
 A production-quality AI-powered customer feedback analysis and prioritization system built with CrewAI, FastAPI, and Next.js.
 
@@ -57,7 +57,7 @@ A production-quality AI-powered customer feedback analysis and prioritization sy
 
 1. Clone the repository and install dependencies:
 ```bash
-make install
+git clone https://github.com/ghostshanky/VESTA_Agent.git
 ```
 
 2. Configure environment variables:
@@ -234,26 +234,8 @@ The system automatically generates and distributes reports based on the `REPORT_
 - Check API key permissions and billing
 - Enable `MOCK_MODE=true` for testing without LLM
 
-## License
-
-MIT License
-
 ## Support
 
 For issues and questions, please open an issue on GitHub.
 
 ---
-
-# Summary of Changes Made
-
-- Added sorting functionality to the FeedbackTable component in the frontend.
-- Fixed TypeScript errors by properly importing React hooks.
-- Improved email report generation:
-  - Converted markdown report content to HTML for better email formatting.
-  - Enhanced email template with colors, shading, box shadows, and styled headers.
-  - Added VESTA Agent logo and footer message in the email.
-  - Styled admin panel link for better visibility.
-- Added markdown package to requirements and installed it.
-- Updated README.md with detailed project overview, setup instructions, usage, testing, and recent enhancements related to email report improvements.
-
-This completes the requested tasks and improvements for the Customer Feedback Prioritization System.
